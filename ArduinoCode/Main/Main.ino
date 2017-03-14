@@ -6,6 +6,8 @@ Drive forward and turn left or right when border is detected
 #include <Pushbutton.h>
 #include <QTRSensors.h>
 #include <ZumoReflectanceSensorArray.h>
+#include <NewPing.h>
+
  
 #define LED 13
  
@@ -22,6 +24,11 @@ Drive forward and turn left or right when border is detected
 
 int left_neg = 0;
 int right_neg = 0;
+
+//Ultralyd setup
+const int echoPin = 6;
+const int triggerPin = 5;
+NewPing sonar(triggerPin, echoPin, 300);
  
 ZumoMotors motors;
 Pushbutton button(ZUMO_BUTTON); // pushbutton on pin 12
@@ -65,4 +72,19 @@ void loop()
   }
   // go straight, the stuff above are using blocking calls
   motors.setSpeeds(FORWARD_SPEED - left_neg, FORWARD_SPEED - right_neg);
+
+  handleBackDoor();
 }
+
+void handleBackDoor(){
+  unsigned int time = sonar.ping();
+  float distance = sonar.convert_cm(time);
+  
+  if(distance < 15 && distance > 0.1f){
+    motors.setSpeeds(0,0);
+
+    //Add a stuff to do if detected behind
+    delay(5000);
+  }
+}
+
