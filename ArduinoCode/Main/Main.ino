@@ -6,8 +6,7 @@ Drive forward and turn left or right when border is detected
 #include <QTRSensors.h>
 #include <ZumoReflectanceSensorArray.h>
 #include <PLabBTSerial.h>
-
-
+#include <NewPing.h>
 #define LED 13
  
 // this might need to be tuned for different lighting conditions, surfaces, etc.
@@ -23,6 +22,11 @@ Drive forward and turn left or right when border is detected
 int FORWARD_TURN_PERCENTAGE = 38; // Percentage, 0..100, lower is less turn
 int LEFT_NEG = 0;                 // Subtracted from left forward speed
 int RIGHT_NEG = 0;                // Subtracted from right forward speed
+
+//Ultralyd setup
+const int echoPin = 6;
+const int triggerPin = 5;
+NewPing sonar(triggerPin, echoPin, 300);
  
 ZumoMotors motors;
  
@@ -76,8 +80,9 @@ void loop()
   }
   // go straight, the stuff above are using blocking calls
   motors.setSpeeds(FORWARD_SPEED - LEFT_NEG, FORWARD_SPEED - RIGHT_NEG);
-
-
+  
+  // Check if something is behind the Zumo robot
+  handleBackDoor();
   // Handle Bluetooth functions:
   handleBluetooth();
 }
@@ -137,6 +142,18 @@ void parseMsg(String &incMessage, String &responseStr) {
     setForwardTurnPerc(intTurn);
     responseStr = "OK NEW TURN SET";
     return;
+  }
+}
+
+void handleBackDoor(){
+  unsigned int time = sonar.ping();
+  float distance = sonar.convert_cm(time);
+  
+  if(distance < 15 && distance > 0.1f){
+    motors.setSpeeds(0,0);
+
+    // Simple test case if detected something behind
+    delay(5000);
   }
 }
 
