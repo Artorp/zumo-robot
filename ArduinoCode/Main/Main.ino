@@ -16,8 +16,12 @@ Drive forward and turn left or right when border is detected
 #define REVERSE_SPEED     400 // 0 is stopped, 400 is full speed
 #define TURN_SPEED        400
 #define FORWARD_SPEED     400
+#define FORWARD_TURN_MAGNITUDE 38 // Percentage, 0..100, lower is less turn
 #define REVERSE_DURATION  200 // ms
 #define TURN_DURATION     230 // ms
+
+int left_neg = 0;
+int right_neg = 0;
  
 ZumoMotors motors;
 Pushbutton button(ZUMO_BUTTON); // pushbutton on pin 12
@@ -46,7 +50,8 @@ void loop()
     delay(REVERSE_DURATION);
     motors.setSpeeds(TURN_SPEED, -TURN_SPEED);
     delay(TURN_DURATION);
-    motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
+    left_neg = 0;
+    right_neg = FORWARD_TURN_MAGNITUDE * FORWARD_SPEED / 100;
   }
   else if (sensor_values[5] <  QTR_THRESHOLD)
   {
@@ -55,11 +60,9 @@ void loop()
     delay(REVERSE_DURATION);
     motors.setSpeeds(-TURN_SPEED, TURN_SPEED);
     delay(TURN_DURATION);
-    motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
+    left_neg = FORWARD_TURN_MAGNITUDE * FORWARD_SPEED / 100;
+    right_neg = 0;
   }
-  else
-  {
-    // otherwise, go straight
-    motors.setSpeeds(FORWARD_SPEED, FORWARD_SPEED);
-  }
+  // go straight, the stuff above are using blocking calls
+  motors.setSpeeds(FORWARD_SPEED - left_neg, FORWARD_SPEED - right_neg);
 }
