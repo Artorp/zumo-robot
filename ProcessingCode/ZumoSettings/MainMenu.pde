@@ -1,9 +1,19 @@
 // This contains all code for the structure and methods on the main menu
 
-void setupMainMenu() {
+void setupMainMenu(PApplet main) {
+  final PApplet mn = main;
   // The root element of the main menu is a VBox
   VBox root = new VBox(0, 0, width, height, 0);
-  stageMainMenu = new Stage(root, color(0));
+  stageMainMenu = new Stage(root, color(0)){
+    @Override public void show() {
+      if (isConfiguring) {
+        // Connect to bluetooth stuff
+        klist = new KetaiList(mn, bt.getPairedDeviceNames());
+        isConfiguring = false;
+      }
+      super.show();
+    }
+  };
   
   List<ShowableMargins> elements = new ArrayList<ShowableMargins>();
   
@@ -15,10 +25,10 @@ void setupMainMenu() {
   elements.add(title);
   
   Button btn1 = new Button("Connect to paired device", width, defaultButtonHeight, 20*u, 20*u);
-  btn1.setTextSize(36*u);
+  btn1.setTextSize(32*u);
   btn1.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
-      println("TODO: Set up connection code");
+      isConfiguring = true;
     }
   });
   elements.add(btn1);
@@ -34,7 +44,7 @@ void setupMainMenu() {
   Button btn3 = new Button("About", width, defaultButtonHeight, 20*u, 20*u);
   btn3.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
-      println("TODO: Set up about popup.");
+      KetaiAlertDialog.popup(mn, "About Zumo Settings", "Zumo Settings v1.0\n\nCreated by Thomas Bruvold\nGroup Project PLab Spring 2017");
     }
   });
   elements.add(btn3);

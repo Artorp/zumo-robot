@@ -1,5 +1,5 @@
 // This contains all code for the structure and methods on the setup zumo stage
-void setupSetup() {
+void setupSetup(PApplet main) {
   // The root element of the setup page is a VBox
   VBox root = new VBox(0, 0, width, height, 0);
   stageSetup = new Stage(root, color(0));
@@ -14,7 +14,6 @@ void setupSetup() {
   elements.add(title);
   
   Button btn1 = new Button("Get Zumo Speed", width, defaultButtonHeight, 20*u, 20*u);
-  btn1.setTextSize(36*u);
   btn1.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
       println("TODO: Set up connection get code");

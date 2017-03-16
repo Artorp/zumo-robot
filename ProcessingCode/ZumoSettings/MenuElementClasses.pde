@@ -16,6 +16,10 @@ interface Container {
   public void addElements(List<ShowableMargins> elements);
 }
 
+interface BTListener {
+  public void sendMessage(String msg);
+}
+
 /*
 * The stage represents a menu on the app, it renders every element within
 */
@@ -94,7 +98,8 @@ class ShowableMarginsImpl implements ShowableMargins {
   }
   
   
-  @Override public void show() {
+  //@Override
+  public void show() {
     if (debugShowBounding) {
       // DEBUG: Show our own bounding box
       pushStyle();
@@ -107,22 +112,32 @@ class ShowableMarginsImpl implements ShowableMargins {
     }
   }
   
-  @Override public float getTopMargin()    { return topMargin; }
-  @Override public float getRightMargin()  { return rightMargin; }
-  @Override public float getBottomMargin() { return bottomMargin; }
-  @Override public float getLeftMargin()   { return leftMargin; }
-  @Override public float getWidth()        { return w; }
-  @Override public float getHeight()       { return h; }
-  @Override public float setMaxWidth(float w) {
+  //@Override
+  public float getTopMargin()    { return topMargin; }
+  //@Override
+  public float getRightMargin()  { return rightMargin; }
+  //@Override
+  public float getBottomMargin() { return bottomMargin; }
+  //@Override
+  public float getLeftMargin()   { return leftMargin; }
+  //@Override
+  public float getWidth()        { return w; }
+  //@Override
+  public float getHeight()       { return h; }
+  //@Override
+  public float setMaxWidth(float w) {
     this.w = Math.min(w - (leftMargin + rightMargin), this.w);
     return this.w;
   }
-  @Override public float setMaxHeight(float h) {
+  //@Override
+  public float setMaxHeight(float h) {
     this.h = Math.min(h - (topMargin + bottomMargin), this.h);
     return this.h;
   }
-  @Override public void setX(float x) { this.x = x; }
-  @Override public void setY(float y) { this.y = y; }
+  //@Override
+  public void setX(float x) { this.x = x; }
+  //@Override
+  public void setY(float y) { this.y = y; }
   
 }
 
@@ -167,7 +182,8 @@ class VBox extends ShowableMarginsImpl implements Container {
     }
   }
   
-  @Override public void addElements(List<ShowableMargins> elements) {
+  //@Override
+  public void addElements(List<ShowableMargins> elements) {
     // This method will change elements' width and height to fit this container, and then add them
     int len = elements.size();
     for (int i = 0; i < len; i++) {
@@ -267,7 +283,7 @@ class Button extends ShowableMarginsImpl {
     }
     textAlign(CENTER, CENTER);
     textSize(txtSize);
-    text(text, x + w / 2, y + h / 2 - txtSize*0.15);
+    text(text, x + w / 2, y + h / 2 - txtSize*0.11);
   }
 }
 
