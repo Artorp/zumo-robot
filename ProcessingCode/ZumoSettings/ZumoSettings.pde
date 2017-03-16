@@ -2,10 +2,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 // Globals
-boolean debugShowBounding = true;
+boolean debugShowBounding = false;
 float u; // Scalable pixel unit depending on size, think "rem" from CSS, defaults to 2 px on a 1080px width
 float defaultButtonTextSize;
 float defaultButtonHeight;
+PFont myFont;
 
 // Stages:
 Stage stageMainMenu;
@@ -16,7 +17,7 @@ enum Menu {
   MAIN,
   SETUP
 }
-Menu menu = Menu.SETUP; // The 
+Menu menu = Menu.MAIN; // The global stage choice
 
 
 void setup() {
@@ -26,6 +27,10 @@ void setup() {
   defaultButtonHeight = 120*u;
   // Actual dims: x:1080, y:1920 (portrait)
   orientation(PORTRAIT);
+  
+  // frameRate(30);
+  myFont = createFont("Monospaced-Bold", 14);
+  textFont(myFont);
   
   setupMainMenu();
   setupSetup();

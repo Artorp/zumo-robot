@@ -195,6 +195,9 @@ class Button extends ShowableMarginsImpl {
   
   String text;
   float txtSize;
+  boolean pressed;
+  boolean prevMousePressed;
+  FunctionOnAction onAction;
   
   Button(String text, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
     super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
@@ -220,14 +223,48 @@ class Button extends ShowableMarginsImpl {
     return this;
   }
   
+  public Button setOnAction(FunctionOnAction onAction) {
+    this.onAction = onAction;
+    return this;
+  }
+  
+  private boolean inside() {
+    return (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h);
+  }
+  
   @Override public void show() {
+    // Check mouse action
+    
+    if (mousePressed && ! prevMousePressed) {
+      if (inside()) {
+        pressed = true;
+      }
+    } else if (mousePressed && ! inside()) {
+      pressed = false;
+    } else if (! mousePressed && prevMousePressed && pressed) {
+      pressed = false;
+      if (onAction != null) {
+        onAction.apply();
+      }
+    }
+    
+    prevMousePressed = mousePressed;
+    
     // Render button:
     stroke(#1E78E3);
-    fill(0);
+    if (pressed) {
+      fill(255);
+    } else {
+      fill(0);
+    }
     rect(x, y, w, h);
     // Render our text:
     noStroke();
-    fill(255);
+    if (pressed) {
+      fill(0);
+    } else {
+      fill(255);
+    }
     textAlign(CENTER, CENTER);
     textSize(txtSize);
     text(text, x + w / 2, y + h / 2 - txtSize*0.15);
@@ -313,6 +350,7 @@ class LabelValue extends ShowableMarginsImpl {
   String text;
   float value;
   float txtSize;
+  Slider boundTo;
   
   LabelValue(String text, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
     super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
@@ -343,7 +381,16 @@ class LabelValue extends ShowableMarginsImpl {
     this.value = v;
   }
   
+  public void bind(Slider slider) {
+    boundTo = slider;
+  }
+  
   @Override public void show() {
+    // Get value if applicable
+    if (boundTo != null) {
+      this.value = boundTo.getValue();
+    }
+    
     // Render our text:
     noStroke();
     fill(255);
@@ -362,14 +409,18 @@ class Slider extends ShowableMarginsImpl {
   float box_y; // Center
   float box_x; // Center
   float box_s; // Horizontal and vertical size
+  float xOffset; // Used when dragging slider
   boolean lock;
+  boolean prevMousePressed;
   
   Slider(float val, float minVal, float maxVal, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
     super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
     this.value = val;
     this.minVal = minVal;
     this.maxVal = maxVal;
-    box_s = 60*u;
+    box_s = 80*u;
+    prevMousePressed = false;
+    xOffset = 0;
   }
   
   Slider(float val, float minVal, float maxVal, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
@@ -391,8 +442,7 @@ class Slider extends ShowableMarginsImpl {
   }
   
   public float getValue() {
-    float return_val = box_x;
-    map(return_val, x + box_s/2, x + w - box_s/2, minVal, maxVal);
+    float return_val = map(box_x, x + box_s/2, x + w - box_s/2, minVal, maxVal);
     return return_val;
   }
   
@@ -418,14 +468,45 @@ class Slider extends ShowableMarginsImpl {
     line(x, y + h/2, x + w, y + h/2);
     popStyle();
     
+    // Move the box:
+    
+    if (mousePressed && prevMousePressed == false) {
+      if (inside_box()) {
+        lock = true;
+        xOffset = mouseX - box_x;
+      }
+    } else if (! mousePressed && prevMousePressed == true) {
+      lock = false;
+    }
+    
+    prevMousePressed = mousePressed;
+    
+    if (lock) {
+      box_x = constrain(mouseX - xOffset, x + box_s/2, x+w - box_s/2);
+    }
+    
+    
     // Render the box:
     pushStyle();
     
     stroke(0);
-    fill(180);
+    if (lock) {
+      fill(255);
+    } else {
+      fill(180);
+    }
     rect(box_x - box_s / 2, box_y - box_s / 2, box_s, box_s);
     
     popStyle();
     
+  }
+  
+  private boolean inside_box() {
+    float hs = box_s/2;
+    if (mouseX > box_x - hs && mouseX < box_x + hs &&
+        mouseY > box_y - hs && mouseY < box_y + hs) {
+      return true;
+    }
+    return false;
   }
 }
