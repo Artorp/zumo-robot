@@ -13,36 +13,73 @@ void setupSetup(PApplet main) {
   title.txtSize(60*u);
   elements.add(title);
   
+  final LabelValue labelSpeed = new LabelValue("Speed:", width, defaultButtonHeight, 20*u, 20*u);
+  
   Button btn1 = new Button("Get Zumo Speed", width, defaultButtonHeight, 20*u, 20*u);
-  btn1.setOnAction(new FunctionOnAction(){
-    @Override public void apply() {
-      println("TODO: Set up connection get code");
-    }
-  });
   elements.add(btn1);
   
-  LabelValue labelSpeed = new LabelValue("Speed:", width, defaultButtonHeight, 20*u, 20*u);
+  
   elements.add(labelSpeed);
   
-  Slider sliderSpeed = new Slider(200, 0, 400, width, defaultButtonHeight, 20*u);
+  final Slider sliderSpeed = new Slider(200, 0, 400, width, defaultButtonHeight, 20*u);
   labelSpeed.bind(sliderSpeed);
   elements.add(sliderSpeed);
   
   Button btn2 = new Button("Set Zumo Speed", width, defaultButtonHeight, 20*u, 20*u);
-  btn2.setOnAction(new FunctionOnAction(){
-    @Override public void apply() {
-      println("TODO: Set up connection set code");
-    }
-  });
   elements.add(btn2);
   
   Button btn3 = new Button("Back", width, defaultButtonHeight, 20*u, 20*u);
+  elements.add(btn3);
+  
+  // On Action elements
+  // Get Zumo speed
+  btn1.setOnAction(new FunctionOnAction(){
+    @Override public void apply() {
+      BTListener getZumoSpeed = new BTListener(){
+        @Override public void sendMessage(String msg) {
+          if (msg.startsWith("OUR SPEED IS ")) {
+            int speed = Integer.parseInt(msg.substring(13));
+            sliderSpeed.setValue(speed);
+          } else {
+            println("Failed to received message, expected \"OUR SPEED IS \" but got "+msg);
+          }
+          btListeners.remove(this);
+        }
+      };
+      btListeners.add(getZumoSpeed);
+      String toSend = "GETSPEED\r\n";
+      byte[] data = toSend.getBytes(Charset.forName("UTF-8"));
+      bt.broadcast(data);
+    }
+  });
+  
+  // Set new Zumo speed
+  btn2.setOnAction(new FunctionOnAction(){
+    @Override public void apply() {
+      BTListener setZumoSpeed = new BTListener(){
+        @Override public void sendMessage(String msg) {
+          if (msg.startsWith("OK NEW SPEED SET")) {
+            // Good
+          } else {
+            println("Failed to received message, expected \"OK NEW SPEED SET\" but got "+msg);
+          }
+          btListeners.remove(this);
+        }
+      };
+      btListeners.add(setZumoSpeed);
+      int newSpeed = (int) sliderSpeed.getValue();
+      String toSend = "SETSPEED "+newSpeed+"\r\n";
+      byte[] data = toSend.getBytes(Charset.forName("UTF-8"));
+      bt.broadcast(data);
+    }
+  });
+  
+  // Back
   btn3.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
       menu = Menu.MAIN;
     }
   });
-  elements.add(btn3);
   
   root.addElements(elements);
 }

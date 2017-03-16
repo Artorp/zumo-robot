@@ -40,6 +40,7 @@ void onCreate(Bundle savedInstanceState) {
 
 void onActivityResult(int requestCode, int resultCode, Intent data) {
   bt.onActivityResult(requestCode, resultCode, data);
+  println("requestCode: "+requestCode+" resultCode: "+resultCode+" intent: "+data);
 }
 
 

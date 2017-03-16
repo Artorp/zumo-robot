@@ -16,8 +16,9 @@ interface Container {
   public void addElements(List<ShowableMargins> elements);
 }
 
-interface BTListener {
-  public void sendMessage(String msg);
+class BTListener {
+  public void sendMessage(String msg) {
+  }
 }
 
 /*
@@ -452,9 +453,9 @@ class Slider extends ShowableMarginsImpl {
     this(val, minVal, maxVal, w, h, margin, margin, margin, margin);
   }
   
-  private float calcBoxX() {
+  private void calcBoxX() {
     float return_x = map(value, minVal, maxVal, x + box_s / 2, x + w - box_s/2);
-    return return_x;
+    box_x = return_x;
   }
   
   public float getValue() {
@@ -462,9 +463,14 @@ class Slider extends ShowableMarginsImpl {
     return return_val;
   }
   
+  public void setValue(float value) {
+    this.value = value;
+    calcBoxX();
+  }
+  
   @Override public void setX(float x) {
     super.setX(x);
-    box_x = calcBoxX();
+    calcBoxX();
   }
   
   @Override public void setY(float y) {

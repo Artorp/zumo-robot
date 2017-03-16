@@ -44,7 +44,7 @@ void setupMainMenu(PApplet main) {
   Button btn3 = new Button("About", width, defaultButtonHeight, 20*u, 20*u);
   btn3.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
-      KetaiAlertDialog.popup(mn, "About Zumo Settings", "Zumo Settings v1.0\n\nCreated by Thomas Bruvold\nGroup Project PLab Spring 2017");
+      KetaiAlertDialog.popup(mn, "About Zumo Settings", "Zumo Settings v1.0\n\nAuthor: Thomas Bruvold\nGroup Project PLab Spring 2017");
     }
   });
   elements.add(btn3);
