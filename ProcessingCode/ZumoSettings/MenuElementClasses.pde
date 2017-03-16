@@ -99,7 +99,7 @@ class ShowableMarginsImpl implements ShowableMargins {
       // DEBUG: Show our own bounding box
       pushStyle();
       
-      fill(#C4557C);
+      fill(#D67CFA);
       stroke(0, 255, 0);
       rect(x, y, w, h);
       
@@ -194,13 +194,15 @@ class VBox extends ShowableMarginsImpl implements Container {
 class Button extends ShowableMarginsImpl {
   
   String text;
+  float txtSize;
   
   Button(String text, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
     super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
     this.text = text;
+    this.txtSize = defaultButtonTextSize;
   }
   
-  Button(String text, float x, float y, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
+  Button(String text, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
     // Constructor overloading, call our most parameterized constructor
     this(text, w, h, topMargin, sideMargins, bottomMargin, sideMargins);
   }
@@ -213,6 +215,11 @@ class Button extends ShowableMarginsImpl {
     this(text, w, h, margin, margin, margin, margin);
   }
   
+  public Button setTextSize(float size) {
+    txtSize = size;
+    return this;
+  }
+  
   @Override public void show() {
     // Render button:
     stroke(#1E78E3);
@@ -222,7 +229,81 @@ class Button extends ShowableMarginsImpl {
     noStroke();
     fill(255);
     textAlign(CENTER);
-    textSize(defaultButtonTextSize);
-    text(text, x + w / 2, y + h / 2 + defaultButtonTextSize/2 - 8*u);
+    textSize(txtSize);
+    text(text, x + w / 2, y + h / 2 + txtSize/2 - 8*u);
+  }
+}
+
+class TextArea extends ShowableMarginsImpl {
+  
+  String text;
+  color fillColor;
+  color strokeColor;
+  color textColor;
+  float textSize;
+  
+  TextArea(String text, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
+    super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
+    this.text = text;
+    this.fillColor = -1;
+    this.strokeColor = -1;
+    this.textColor = color(255);
+    this.textSize = defaultButtonTextSize;
+  }
+  
+  TextArea(String text, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
+    // Constructor overloading, call our most parameterized constructor
+    this(text, w, h, topMargin, sideMargins, bottomMargin, sideMargins);
+  }
+  
+  TextArea(String text, float w, float h, float vMargin, float hMargin) {
+    this(text, w, h, vMargin, hMargin, vMargin, hMargin);
+  }
+  
+  TextArea(String text, float w, float h, float margin) {
+    this(text, w, h, margin, margin, margin, margin);
+  }
+  
+  public TextArea fillColor(color fill) {
+    this.fillColor = fill;
+    return this;
+  }
+  
+  public TextArea strokeColor(color s) {
+    this.strokeColor = s;
+    return this;
+  }
+  
+  public TextArea textColor(color t) {
+    this.fillColor = t;
+    return this;
+  }
+  
+  public TextArea txtSize(float size) {
+    this.textSize = size;
+    return this;
+  }
+  
+  @Override public void show() {
+    // Render area:
+    if (strokeColor != -1) {
+      stroke(strokeColor);
+    } else {
+      noStroke();
+    }
+    if (fillColor != -1) {
+      fill(fillColor);
+    } else {
+      noFill();
+    }
+    if (strokeColor != -1 || fillColor != -1) {
+      rect(x, y, w, h);
+    }
+    // Render our text:
+    noStroke();
+    fill(textColor);
+    textAlign(CENTER);
+    textSize(textSize);
+    text(text, x + w / 2, y + h / 2 + textSize/2 - 8*u);
   }
 }

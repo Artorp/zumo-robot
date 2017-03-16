@@ -21,7 +21,7 @@ void setup() {
   size(540, 960); // Nexus 5x half dimentions, only to be used in java mode, use fullScreen() in Android mode
   u = floor(width/540);
   defaultButtonTextSize = 50*u;
-  defaultButtonHeight = 80*u;
+  defaultButtonHeight = 120*u;
   // Actual dims: x:1080, y:1920 (portrait)
   orientation(PORTRAIT);
   
