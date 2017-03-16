@@ -85,7 +85,7 @@ class ShowableMarginsImpl implements ShowableMargins {
     this(x, y, w, h, topMargin, sideMargins, bottomMargin, sideMargins);
   }
   
-  ShowableMarginsImpl(float x, float y, float w, float h, float hMargin, float vMargin) {
+  ShowableMarginsImpl(float x, float y, float w, float h, float vMargin, float hMargin) {
     this(x, y, w, h, vMargin, hMargin, vMargin, hMargin);
   }
   
@@ -139,10 +139,10 @@ class VBox extends ShowableMarginsImpl implements Container {
   VBox(float x, float y, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
     super(x, y, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
     // This is the most parameterized constructor
-    this.elements = new ArrayList();
+    this.elements = new ArrayList<ShowableMargins>();
     
-    xPencil = x;
-    yPencil = y;
+    xPencil = this.x;
+    yPencil = this.y;
   }
   
   VBox(float x, float y, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
@@ -150,7 +150,7 @@ class VBox extends ShowableMarginsImpl implements Container {
     this(x, y, w, h, topMargin, sideMargins, bottomMargin, sideMargins);
   }
   
-  VBox(float x, float y, float w, float h, float hMargin, float vMargin) {
+  VBox(float x, float y, float w, float h, float vMargin, float hMargin) {
     this(x, y, w, h, vMargin, hMargin, vMargin, hMargin);
   }
   
@@ -182,10 +182,10 @@ class VBox extends ShowableMarginsImpl implements Container {
         ShowableMargins prevElement = elements.get(i - 1);
         prevBottomMargin = prevElement.getBottomMargin();
       }
-      this.yPencil += Math.max(prevBottomMargin, element.getTopMargin()); // Make sure margins can overlap
+      yPencil += Math.max(prevBottomMargin, element.getTopMargin()); // Make sure margins can overlap
       element.setX(this.xPencil + element.getLeftMargin()); // This is a VBox, x is always ( our x + leftMargin )
       element.setY(this.yPencil);
-      this.yPencil += element.getHeight();
+      yPencil += element.getHeight();
     }
     this.elements.addAll(elements);
   }
@@ -205,7 +205,7 @@ class Button extends ShowableMarginsImpl {
     this(text, w, h, topMargin, sideMargins, bottomMargin, sideMargins);
   }
   
-  Button(String text, float w, float h, float hMargin, float vMargin) {
+  Button(String text, float w, float h, float vMargin, float hMargin) {
     this(text, w, h, vMargin, hMargin, vMargin, hMargin);
   }
   
@@ -214,11 +214,15 @@ class Button extends ShowableMarginsImpl {
   }
   
   @Override public void show() {
+    // Render button:
+    stroke(#1E78E3);
+    fill(0);
+    rect(x, y, w, h);
     // Render our text:
     noStroke();
     fill(255);
     textAlign(CENTER);
     textSize(defaultButtonTextSize);
-    text(text, x + w / 2, y + h / 2);
+    text(text, x + w / 2, y + h / 2 + defaultButtonTextSize/2 - 8*u);
   }
 }
