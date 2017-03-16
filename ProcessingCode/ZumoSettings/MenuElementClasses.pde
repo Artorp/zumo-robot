@@ -228,9 +228,9 @@ class Button extends ShowableMarginsImpl {
     // Render our text:
     noStroke();
     fill(255);
-    textAlign(CENTER);
+    textAlign(CENTER, CENTER);
     textSize(txtSize);
-    text(text, x + w / 2, y + h / 2 + txtSize/2 - 8*u);
+    text(text, x + w / 2, y + h / 2 - txtSize*0.15);
   }
 }
 
@@ -302,8 +302,130 @@ class TextArea extends ShowableMarginsImpl {
     // Render our text:
     noStroke();
     fill(textColor);
-    textAlign(CENTER);
+    textAlign(CENTER, CENTER);
     textSize(textSize);
-    text(text, x + w / 2, y + h / 2 + textSize/2 - 8*u);
+    text(text, x + w / 2, y + h / 2 - textSize*0.15);
+  }
+}
+
+class LabelValue extends ShowableMarginsImpl {
+  
+  String text;
+  float value;
+  float txtSize;
+  
+  LabelValue(String text, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
+    super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
+    this.text = text;
+    this.value = 0;
+    this.txtSize = defaultButtonTextSize;
+  }
+  
+  LabelValue(String text, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
+    // Constructor overloading, call our most parameterized constructor
+    this(text, w, h, topMargin, sideMargins, bottomMargin, sideMargins);
+  }
+  
+  LabelValue(String text, float w, float h, float vMargin, float hMargin) {
+    this(text, w, h, vMargin, hMargin, vMargin, hMargin);
+  }
+  
+  LabelValue(String text, float w, float h, float margin) {
+    this(text, w, h, margin, margin, margin, margin);
+  }
+  
+  public LabelValue setTextSize(float size) {
+    txtSize = size;
+    return this;
+  }
+  
+  public void setValue(float v) {
+    this.value = v;
+  }
+  
+  @Override public void show() {
+    // Render our text:
+    noStroke();
+    fill(255);
+    textAlign(LEFT, CENTER);
+    textSize(txtSize);
+    text(text, x, y + h / 2 - txtSize*0.15);
+    textAlign(RIGHT, CENTER);
+    text(int(value), x + w, y + h / 2 - txtSize*0.15);
+  }
+}
+
+class Slider extends ShowableMarginsImpl {
+  float value;
+  float maxVal;
+  float minVal;
+  float box_y; // Center
+  float box_x; // Center
+  float box_s; // Horizontal and vertical size
+  boolean lock;
+  
+  Slider(float val, float minVal, float maxVal, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
+    super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
+    this.value = val;
+    this.minVal = minVal;
+    this.maxVal = maxVal;
+    box_s = 60*u;
+  }
+  
+  Slider(float val, float minVal, float maxVal, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
+    // Constructor overloading, call our most parameterized constructor
+    this(val, minVal, maxVal, w, h, topMargin, sideMargins, bottomMargin, sideMargins);
+  }
+  
+  Slider(float val, float minVal, float maxVal, float w, float h, float vMargin, float hMargin) {
+    this(val, minVal, maxVal, w, h, vMargin, hMargin, vMargin, hMargin);
+  }
+  
+  Slider(float val, float minVal, float maxVal, float w, float h, float margin) {
+    this(val, minVal, maxVal, w, h, margin, margin, margin, margin);
+  }
+  
+  private float calcBoxX() {
+    float return_x = map(value, minVal, maxVal, x + box_s / 2, x + w - box_s/2);
+    return return_x;
+  }
+  
+  public float getValue() {
+    float return_val = box_x;
+    map(return_val, x + box_s/2, x + w - box_s/2, minVal, maxVal);
+    return return_val;
+  }
+  
+  @Override public void setX(float x) {
+    super.setX(x);
+    box_x = calcBoxX();
+  }
+  
+  @Override public void setY(float y) {
+    super.setY(y);
+    box_y = y + h/2;
+  }
+  
+  @Override public void show() {
+    // Render the lines:
+    pushStyle();
+    noFill();
+    stroke(255);
+    strokeWeight(4);
+    line(x, y, x, y + h);
+    line(x + w, y, x + w, y + h);
+    strokeCap(SQUARE);
+    line(x, y + h/2, x + w, y + h/2);
+    popStyle();
+    
+    // Render the box:
+    pushStyle();
+    
+    stroke(0);
+    fill(180);
+    rect(box_x - box_s / 2, box_y - box_s / 2, box_s, box_s);
+    
+    popStyle();
+    
   }
 }

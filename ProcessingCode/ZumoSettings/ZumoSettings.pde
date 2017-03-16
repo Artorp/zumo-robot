@@ -9,12 +9,14 @@ float defaultButtonHeight;
 
 // Stages:
 Stage stageMainMenu;
+Stage stageSetup;
 
 // Active menu:
 enum Menu {
-  MAIN
+  MAIN,
+  SETUP
 }
-Menu menu = Menu.MAIN; // The 
+Menu menu = Menu.SETUP; // The 
 
 
 void setup() {
@@ -26,6 +28,7 @@ void setup() {
   orientation(PORTRAIT);
   
   setupMainMenu();
+  setupSetup();
 }
 
 void draw() {
@@ -33,6 +36,10 @@ void draw() {
   if (menu == Menu.MAIN) {
     if (stageMainMenu != null) {
       stageMainMenu.show();
+    }
+  } else if (menu == Menu.SETUP) {
+    if (stageSetup != null) {
+      stageSetup.show();
     }
   }
 }
