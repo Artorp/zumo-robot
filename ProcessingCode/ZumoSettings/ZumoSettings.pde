@@ -83,7 +83,6 @@ void draw() {
     }
   }
   checkConnection();
-  println(frameRate);
 }
 
 void onKetaiListSelection(KetaiList klist) {

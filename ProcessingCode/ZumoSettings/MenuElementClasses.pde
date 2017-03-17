@@ -481,7 +481,8 @@ class Slider extends ShowableMarginsImpl {
   }
   
   public void setValue(float value) {
-    this.value = value;
+    float newValue = constrain(value, 0, 400);
+    this.value = newValue;
     calcBoxX();
   }
   

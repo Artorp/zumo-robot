@@ -150,7 +150,7 @@ void parseMsg(String &incMessage, String &responseStr) {
     responseStr = "OK NEW SPEED SET|";
     return;
   } else if (incMessage.startsWith("GETSPEED")) {
-    responseStr = "OUR SPEED IS "+String(FORWARD_SPEED)+"|";
+    responseStr = "SPEED IS "+String(FORWARD_SPEED)+"|";
     return;
   }
 }

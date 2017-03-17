@@ -53,11 +53,11 @@ void setupSetup(PApplet main) {
     @Override public void apply() {
       BTListener getZumoSpeed = new BTListener(){
         @Override public void sendMessage(String msg) {
-          if (msg.startsWith("OUR SPEED IS ")) {
-            int speed = Integer.parseInt(msg.substring(13));
+          if (msg.startsWith("SPEED IS ")) {
+            int speed = Integer.parseInt(msg.substring(9));
             sliderSpeed.setValue(speed);
           } else {
-            println("Failed to received message, expected \"OUR SPEED IS \" but got "+msg);
+            println("Failed to received message, expected \"SPEED IS \" but got "+msg);
           }
           btListeners.remove(this);
         }
