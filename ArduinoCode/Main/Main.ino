@@ -15,7 +15,7 @@ Drive forward and turn left or right when border is detected
 // these might need to be tuned for different motor types
 #define REVERSE_SPEED     400 // 0 is stopped, 400 is full speed
 #define TURN_SPEED        400
-#define FORWARD_SPEED     400
+int     FORWARD_SPEED    =400;
 #define REVERSE_DURATION  200 // ms
 #define TURN_DURATION     230 // ms
 
@@ -39,7 +39,7 @@ ZumoReflectanceSensorArray sensors;
 #define txPin 2  // Tx pin on Bluetooth unit
 #define rxPin 3  // Rx pin on Bluetooth unit
 PLabBTSerial btSerial(txPin, rxPin);
-boolean receivedMessage = false;
+boolean messageReceived = false;
 const int serialBuffer = 128;
 char inMsg[serialBuffer]; // Allocate some space for incoming messages
 char inChar;
@@ -131,16 +131,26 @@ void handleBluetooth() {
 
 void parseMsg(String &incMessage, String &responseStr) {
   incMessage.trim();
-  response = "Unknown command";
+  responseStr = "Unknown command";
   if (incMessage.startsWith("HALO ")) {
-    responseStr = "HELLO THERE";
+    responseStr = "HELLO THERE|";
     return;
   } else if (incMessage.startsWith("SETTURN ")) {
     String newTurn = incMessage.substring(8);
     newTurn.trim();
     int intTurn = newTurn.toInt();
     setForwardTurnPerc(intTurn);
-    responseStr = "OK NEW TURN SET";
+    responseStr = "OK NEW TURN SET|";
+    return;
+  } else if (incMessage.startsWith("SETSPEED ")) {
+    String newSpeed = incMessage.substring(9);
+    newSpeed.trim();
+    int intSpeed = newSpeed.toInt();
+    setForwardSpeed(intSpeed);
+    responseStr = "OK NEW SPEED SET|";
+    return;
+  } else if (incMessage.startsWith("GETSPEED")) {
+    responseStr = "SPEED IS "+String(FORWARD_SPEED)+"|";
     return;
   }
 }
@@ -161,4 +171,10 @@ void setForwardTurnPerc(int n) {
   n = constrain(n, 0, 100);
   FORWARD_TURN_PERCENTAGE = n;
 }
+
+void setForwardSpeed(int n) {
+  n = constrain(n, 0, 400);
+  FORWARD_SPEED = n;
+}
+
 
