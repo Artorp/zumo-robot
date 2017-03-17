@@ -52,7 +52,8 @@ void setupSetup(PApplet main) {
   btn1.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
       BTListener getZumoSpeed = new BTListener(){
-        @Override public void sendMessage(String msg) {
+        @Override public void receiveMessage(String msg) {
+          msg = msg.trim();
           if (msg.startsWith("SPEED IS ")) {
             int speed = Integer.parseInt(msg.substring(9));
             sliderSpeed.setValue(speed);
@@ -73,7 +74,8 @@ void setupSetup(PApplet main) {
   btn2.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
       BTListener setZumoSpeed = new BTListener(){
-        @Override public void sendMessage(String msg) {
+        @Override public void receiveMessage(String msg) {
+          msg = msg.trim();
           if (msg.startsWith("OK NEW SPEED SET")) {
             // Good
           } else {

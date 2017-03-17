@@ -50,12 +50,23 @@ int inIndex = 0;
  
 void setup()
 {
-   sensors.init();
-   btSerial.begin(9600);
+  //sensors.init();
+  btSerial.begin(9600);
 }
 
 void loop()
 {
+  // Read sensors, handle motors
+  handleMotors();
+  
+  // Check if something is behind the Zumo robot
+  handleBackDoor();
+  
+  // Handle Bluetooth functions:
+  handleBluetooth();
+}
+
+void handleMotors() {
   sensors.read(sensor_values);
 
   if (sensor_values[0] < QTR_THRESHOLD)
@@ -80,11 +91,6 @@ void loop()
   }
   // go straight, the stuff above are using blocking calls
   motors.setSpeeds(FORWARD_SPEED - LEFT_NEG, FORWARD_SPEED - RIGHT_NEG);
-  
-  // Check if something is behind the Zumo robot
-  handleBackDoor();
-  // Handle Bluetooth functions:
-  handleBluetooth();
 }
 
 void handleBluetooth() {
@@ -118,6 +124,7 @@ void handleBluetooth() {
     // Send our response:
     if (response.length() > 0) {
       btSerial.println(response);
+      btSerial.flush();
       response = "";
     }
     
@@ -131,7 +138,7 @@ void handleBluetooth() {
 
 void parseMsg(String &incMessage, String &responseStr) {
   incMessage.trim();
-  responseStr = "Unknown command";
+  responseStr = "Unknown command|";
   if (incMessage.startsWith("HALO ")) {
     responseStr = "HELLO THERE|";
     return;

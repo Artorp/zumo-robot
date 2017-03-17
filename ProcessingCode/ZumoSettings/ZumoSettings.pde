@@ -122,7 +122,7 @@ void onBluetoothDataEvent(String who, byte[] data) {
 void btMessageReceived(String msg) {
   println("Message received: "+msg);
   for (BTListener listener : btListeners) {
-    listener.sendMessage(msg);
+    listener.receiveMessage(msg);
   }
 }
 
