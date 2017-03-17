@@ -26,11 +26,15 @@ enum Menu {
 Menu menu = Menu.MAIN; // The global stage choice
 
 // Bluetooth variables
+String ourDevice = "none";
 KetaiBluetooth bt;
 boolean isConfiguring = false; // Wait with configuring until button is pressed
+boolean isConnected = false;
+boolean prevConnected = false;
 KetaiList klist;
 StringBuilder strInput = new StringBuilder("");
 List<BTListener> btListeners = new ArrayList<BTListener>();
+long lastConnectionCheck;
 
 // Required for bluetooth connection
 void onCreate(Bundle savedInstanceState) {
@@ -40,7 +44,6 @@ void onCreate(Bundle savedInstanceState) {
 
 void onActivityResult(int requestCode, int resultCode, Intent data) {
   bt.onActivityResult(requestCode, resultCode, data);
-  println("requestCode: "+requestCode+" resultCode: "+resultCode+" intent: "+data);
 }
 
 
@@ -53,12 +56,14 @@ void setup() {
   // Actual dims: x:1080, y:1920 (portrait)
   orientation(PORTRAIT);
   
-  // frameRate(30);
+  frameRate(30);
   myFont = createFont("Monospaced-Bold", 14);
   textFont(myFont);
   
   // Start listening for bluetooth connections
   bt.start();
+  lastConnectionCheck = System.currentTimeMillis();
+  
   // On app start select device
   isConfiguring = true;
   
@@ -77,11 +82,18 @@ void draw() {
       stageSetup.show();
     }
   }
+  checkConnection();
+  println(frameRate);
 }
 
 void onKetaiListSelection(KetaiList klist) {
   String selection = klist.getSelection();
-  bt.connectToDeviceByName(selection);
+  if (!selection.equals(ourDevice)) {
+    bt.stop();
+    bt.start();
+    bt.connectToDeviceByName(selection);
+    ourDevice = selection;
+  }
   //dispose of list for now
   klist = null;
 }
@@ -112,5 +124,18 @@ void btMessageReceived(String msg) {
   println("Message received: "+msg);
   for (BTListener listener : btListeners) {
     listener.sendMessage(msg);
+  }
+}
+
+void checkConnection() {
+  if (System.currentTimeMillis() - lastConnectionCheck > 200) { // only check ever so often
+    lastConnectionCheck = System.currentTimeMillis();
+    prevConnected = isConnected;
+    isConnected = false;
+    for (String device : bt.getConnectedDeviceNames()) {
+      if (device.startsWith(ourDevice)) {
+        isConnected = true;
+      }
+    }
   }
 }

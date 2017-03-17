@@ -33,6 +33,17 @@ void setupMainMenu(PApplet main) {
   });
   elements.add(btn1);
   
+  Button buttonDisconnect = new Button("Disconnect", width, defaultButtonHeight, 20*u, 20*u);
+  buttonDisconnect.setTextSize(32*u);
+  buttonDisconnect.setOnAction(new FunctionOnAction(){
+    @Override public void apply() {
+      ourDevice = "none";
+      bt.stop();
+      bt.start();
+    }
+  });
+  elements.add(buttonDisconnect);
+  
   Button btn2 = new Button("Setup Zumo", width, defaultButtonHeight, 20*u, 20*u);
   btn2.setOnAction(new FunctionOnAction(){
     @Override public void apply() {
@@ -48,6 +59,30 @@ void setupMainMenu(PApplet main) {
     }
   });
   elements.add(btn3);
+  
+  h = 200*u;
+  tm = 30*u;
+  bm = 20*u;
+  TextArea status = new TextArea("Connection status:\nDisconnected", width, h + tm + bm, tm, 10*u, bm){
+    boolean amDisabled = false;
+    
+    @Override public void show() {
+      super.show();
+      if (isConnected == amDisabled) {
+        if (isConnected) {
+          amDisabled = false;
+          this.text = "Connection status:\nConnected";
+          this.textColor(#2DA032);
+        } else {
+          amDisabled = true;
+          this.text = "Connection status:\nDisconnected";
+          this.textColor(#A52F33);
+        }
+      }
+    }
+  };
+  status.txtSize(30*u).textColor(#A52F33);
+  elements.add(status);
   
   root.addElements(elements);
 }

@@ -215,11 +215,13 @@ class Button extends ShowableMarginsImpl {
   boolean pressed;
   boolean prevMousePressed;
   FunctionOnAction onAction;
+  boolean disabled;
   
   Button(String text, float w, float h, float topMargin, float rightMargin, float bottomMargin, float leftMargin) {
     super(0, 0, w, h, topMargin, rightMargin, bottomMargin, leftMargin);
     this.text = text;
     this.txtSize = defaultButtonTextSize;
+    disabled = false;
   }
   
   Button(String text, float w, float h, float topMargin, float sideMargins, float bottomMargin) {
@@ -249,6 +251,10 @@ class Button extends ShowableMarginsImpl {
     return (mouseX > x && mouseX < x + w && mouseY > y && mouseY < y + h);
   }
   
+  public void setDisabled(boolean state) {
+    disabled = state;
+  }
+  
   @Override public void show() {
     // Check mouse action
     
@@ -260,7 +266,7 @@ class Button extends ShowableMarginsImpl {
       pressed = false;
     } else if (! mousePressed && prevMousePressed && pressed) {
       pressed = false;
-      if (onAction != null) {
+      if (onAction != null && ! disabled) {
         onAction.apply();
       }
     }
@@ -268,23 +274,34 @@ class Button extends ShowableMarginsImpl {
     prevMousePressed = mousePressed;
     
     // Render button:
+    pushStyle();
+    strokeWeight(2);
     stroke(#1E78E3);
-    if (pressed) {
-      fill(255);
+    if (! disabled) {
+      if (pressed) {
+        fill(255);
+      } else {
+        fill(0);
+      }
     } else {
       fill(0);
     }
     rect(x, y, w, h);
     // Render our text:
     noStroke();
-    if (pressed) {
-      fill(0);
+    if (! disabled) {
+      if (pressed) {
+        fill(0);
+      } else {
+        fill(255);
+      }
     } else {
-      fill(255);
+      fill(100);
     }
     textAlign(CENTER, CENTER);
     textSize(txtSize);
     text(text, x + w / 2, y + h / 2 - txtSize*0.11);
+    popStyle();
   }
 }
 

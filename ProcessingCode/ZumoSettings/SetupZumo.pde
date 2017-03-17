@@ -15,7 +15,15 @@ void setupSetup(PApplet main) {
   
   final LabelValue labelSpeed = new LabelValue("Speed:", width, defaultButtonHeight, 20*u, 20*u);
   
-  Button btn1 = new Button("Get Zumo Speed", width, defaultButtonHeight, 20*u, 20*u);
+  Button btn1 = new Button("Get Zumo Speed", width, defaultButtonHeight, 20*u, 20*u){
+    @Override public void show() {
+      if (disabled == isConnected) {
+        this.setDisabled(!isConnected);
+      }
+      super.show();
+    }
+  };
+  btn1.setDisabled(isConnected);
   elements.add(btn1);
   
   
@@ -25,7 +33,15 @@ void setupSetup(PApplet main) {
   labelSpeed.bind(sliderSpeed);
   elements.add(sliderSpeed);
   
-  Button btn2 = new Button("Set Zumo Speed", width, defaultButtonHeight, 20*u, 20*u);
+  Button btn2 = new Button("Set Zumo Speed", width, defaultButtonHeight, 20*u, 20*u){
+    @Override public void show() {
+      if (disabled == isConnected) {
+        this.setDisabled(!isConnected);
+      }
+      super.show();
+    }
+  };
+  btn2.setDisabled(isConnected);
   elements.add(btn2);
   
   Button btn3 = new Button("Back", width, defaultButtonHeight, 20*u, 20*u);
