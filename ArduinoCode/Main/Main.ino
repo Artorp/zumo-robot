@@ -38,7 +38,7 @@ ZumoReflectanceSensorArray sensors;
 // Bluetooth stuff
 #define txPin 2  // Tx pin on Bluetooth unit
 #define rxPin 3  // Rx pin on Bluetooth unit
-PLabBTSerial btSerial(txPin, rxPin);
+//PLabBTSerial btSerial(txPin, rxPin);
 boolean messageReceived = false;
 const int serialBuffer = 128;
 char inMsg[serialBuffer]; // Allocate some space for incoming messages
@@ -50,13 +50,15 @@ int inIndex = 0;
  
 void setup()
 {
-  //sensors.init();
-  btSerial.begin(9600);
+  sensors.init();
+  //btSerial.begin(9600); // This isn't used, use regular serial instead, tx = 0, rx = 1
+  Serial.begin(9600); // This is the Bluetooth serial port
 }
 
 void loop()
 {
   // Read sensors, handle motors
+  sensors.read(sensor_values);
   handleMotors();
   
   // Check if something is behind the Zumo robot
@@ -67,7 +69,6 @@ void loop()
 }
 
 void handleMotors() {
-  sensors.read(sensor_values);
 
   if (sensor_values[0] < QTR_THRESHOLD)
   {
@@ -94,10 +95,10 @@ void handleMotors() {
 }
 
 void handleBluetooth() {
-  while (btSerial.available() && !messageReceived) { // Only look for data if there are some available
+  while (Serial.available() && !messageReceived) { // Only look for data if there are some available
     //Serial.println("There was something available");
     if (inIndex < serialBuffer - 1) { // One less than buffer size is the last index
-      inChar = btSerial.read();
+      inChar = Serial.read();
       //Serial.print("Read:");Serial.println(inChar, DEC);
       inMsg[inIndex] = inChar;
       inIndex++;
@@ -123,8 +124,8 @@ void handleBluetooth() {
 
     // Send our response:
     if (response.length() > 0) {
-      btSerial.println(response);
-      btSerial.flush();
+      Serial.println(response);
+      Serial.flush();
       response = "";
     }
     

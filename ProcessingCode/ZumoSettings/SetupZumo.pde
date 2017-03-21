@@ -65,6 +65,7 @@ void setupSetup(PApplet main) {
       };
       btListeners.add(getZumoSpeed);
       String toSend = "GETSPEED\r\n";
+      println("Sending: "+toSend);
       byte[] data = toSend.getBytes(Charset.forName("UTF-8"));
       bt.broadcast(data);
     }
@@ -87,6 +88,7 @@ void setupSetup(PApplet main) {
       btListeners.add(setZumoSpeed);
       int newSpeed = (int) sliderSpeed.getValue();
       String toSend = "SETSPEED "+newSpeed+"\r\n";
+      println("Sending: "+toSend);
       byte[] data = toSend.getBytes(Charset.forName("UTF-8"));
       bt.broadcast(data);
     }
