@@ -23,7 +23,7 @@ int FORWARD_TURN_AVOID = 90;
 int FORWARD_TURN_PERCENTAGE = FORWARD_TURN_INITIAL; // Percentage, 0..100, lower is less turn
 int LEFT_NEG = 0;                 // Subtracted from left forward speed
 int RIGHT_NEG = 0;                // Subtracted from right forward speed
-long TURN_TIME = 0;                // Time in millis to keep turning sharp after not seeing anything
+long TURN_TIME = 1000;                // Time in millis to keep turning sharp after not seeing anything
 long TURN_START = 0;
 
 #define LEFT_ID  1
@@ -56,6 +56,7 @@ void setup()
   sensors.init();
   // use regular serial instead of btSerial, tx = 0, rx = 1
   Serial.begin(9600); // This is the Bluetooth serial port
+  TURN_START = millis() + TURN_TIME;
 }
 
 void loop()
