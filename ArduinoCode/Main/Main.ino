@@ -19,12 +19,13 @@ int     FORWARD_SPEED    =400;
 #define TURN_DURATION     230 // ms
 
 int FORWARD_TURN_INITIAL = 38;
-int FORWARD_TURN_AVOID = 90;
+int FORWARD_TURN_AVOID = 70;
 int FORWARD_TURN_PERCENTAGE = FORWARD_TURN_INITIAL; // Percentage, 0..100, lower is less turn
 int LEFT_NEG = 0;                 // Subtracted from left forward speed
 int RIGHT_NEG = 0;                // Subtracted from right forward speed
 long TURN_TIME = 1000;                // Time in millis to keep turning sharp after not seeing anything
 long TURN_START = 0;
+long TURN_END = 0;
 
 #define LEFT_ID  1
 #define RIGHT_ID 2
@@ -57,6 +58,7 @@ void setup()
   // use regular serial instead of btSerial, tx = 0, rx = 1
   Serial.begin(9600); // This is the Bluetooth serial port
   TURN_START = millis() + TURN_TIME;
+  TURN_END = millis() + TURN_TIME;
 }
 
 void loop()
@@ -119,7 +121,8 @@ void handleBackDoor(){
   if(distance < 15 && distance > 0.1f){
     FORWARD_TURN_PERCENTAGE = FORWARD_TURN_AVOID;
     TURN_START = millis();
-  } else if ((TURN_TIME + TURN_START - millis()) < 0) {
+    TURN_END = millis() + TURN_TIME;
+  } else if (millis() > TURN_END) {
     FORWARD_TURN_PERCENTAGE = FORWARD_TURN_INITIAL;
   }
   
